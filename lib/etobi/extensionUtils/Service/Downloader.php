@@ -41,6 +41,9 @@ class Downloader {
             curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, $progressCallback);
         }
 
+        // Follow redirects; was necessary as typo3.org is now on SSL.
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+
         curl_exec($ch);
         fclose($fh);
     }
