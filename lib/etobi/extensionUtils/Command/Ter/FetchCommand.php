@@ -33,6 +33,7 @@ class FetchCommand extends AbstractCommand
                 new InputArgument('extensionKey', InputArgument::REQUIRED, 'the extension you want to fetch'),
                 new InputArgument('destinationPath', InputArgument::OPTIONAL, 'the path to write the extension to'),
 		        new InputOption('version', NULL, InputOption::VALUE_REQUIRED, 'the version you want to fetch'),
+		        new InputOption('extension-version', NULL, InputOption::VALUE_REQUIRED, 'the version you want to fetch (legacy option)'),
                 new InputOption('force', 'f', InputOption::VALUE_NONE, 'force override if the file already exists'),
                 new InputOption('extract', 'x', InputOption::VALUE_NONE, 'extract the downloaded file'),
             ))
@@ -61,7 +62,7 @@ EOT
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $extensionKey = $input->getArgument('extensionKey');
-        $version = $input->getOption('version');
+        $version = $input->getOption('extension-version') ? $input->getOption('extension-version') : $input->getOption('version');
         $destinationPath = $input->getArgument('destinationPath');
 
 	    $extensionsXmlService = new ExtensionsXml();

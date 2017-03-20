@@ -30,6 +30,8 @@ class Downloader {
         }
         curl_setopt($ch, CURLOPT_FILE, $fh);
 
+        // Progress bar disabled as it didn't work any more as expected.
+        /*
         if($progressCallback) {
             if(!defined('CURLOPT_PROGRESSFUNCTION')) {
                 throw new \RuntimeException('The progress callback is only supported from PHP 5.3 up');
@@ -40,6 +42,10 @@ class Downloader {
             curl_setopt($ch, CURLOPT_NOPROGRESS, false);
             curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, $progressCallback);
         }
+        */
+
+        // Follow redirects; was necessary as typo3.org is now on SSL.
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
         curl_exec($ch);
         fclose($fh);

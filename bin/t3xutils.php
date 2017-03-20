@@ -3,8 +3,17 @@
 
 use etobi\extensionUtils\Command as Command;
 
-require(__DIR__ . '/../lib/autoload.php');
-\etobi\extensionUtils\register_autoload();
+$files = array(
+	__DIR__ . '/../vendor/autoload.php',
+	__DIR__ . '/../../../autoload.php'
+);
+
+foreach ($files as $file) {
+	if (file_exists($file)) {
+		require_once $file;
+		break;
+	}
+}
 
 $console = new \Symfony\Component\Console\Application();
 $console->setName('t3xutils');
@@ -35,6 +44,7 @@ $console->addCommands(array(
     new Command\EmConf\UpdateCommand(),
     new Command\Ter\CheckExtensionKeyCommand(),
     new Command\Ter\RegisterExtensionKeyCommand(),
+	new Command\Ter\TransferExtensionKeyCommand(),
 	new Command\Ter\DeleteExtensionKeyCommand(),
 	new Command\Ter\SearchAllCommand(),
 	new Command\Ter\SearchUserCommand(),

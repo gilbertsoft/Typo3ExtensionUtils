@@ -2,6 +2,8 @@
 
 namespace etobi\extensionUtils\Service;
 
+use etobi\extensionUtils\Service\EmConfService;
+
 /**
  * service to work with T3X files
  */
@@ -31,10 +33,11 @@ class T3xFile {
             throw new \InvalidArgumentException(sprintf('Can\'t write "%s"', $t3xFilePath));
         }
 
-	    $emConf = new EmConf($sourcePath);
+	    $emConfService = new EmConfService();
+	    $emConf = $emConfService->readFile($sourcePath);
         $extensionData = array(
             'extKey' => $extensionKey,
-            'EM_CONF' => $emConf->toArray(),
+            'EM_CONF' => $emConf->getConfigurationArray(),
             'misc' => array(),
             'techInfo' => array(),
             'FILES' => \etobi\extensionUtils\ter\Helper::getExtensionFilesData($sourcePath)
@@ -90,12 +93,20 @@ class T3xFile {
      * @param string $destinationPath
      */
     protected function writeEmConf($extKey, $emConf, $destinationPath) {
+        // Override settings from the configuration section with any file in the extension.
+        if (file_exists($destinationPath . 'ext_emconf.php')) {
+            $emconfService = new EmConfService();
+            $emConfFile = $emconfService->readFile($destinationPath . 'ext_emconf.php');
+            $emConf = array_replace_recursive($emConfFile->getConfigurationArray(), $emConf);
+        }
+
+        // Write result to file.
         $code = '<?php
 
 /***************************************************************
  * Extension Manager/Repository config file for ext "' . $extKey . '".
  *
- * Auto generated ' . date('d-m-Y H:i') . '
+ * Auto generated ' . date('d-m-Y H:i') . ' by Typo3ExtensionUtils.
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
